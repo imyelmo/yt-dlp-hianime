@@ -5,11 +5,11 @@ from yt_dlp.utils import ExtractorError, clean_html, get_element_by_class
 
 
 class HiAnimeIE(InfoExtractor):
-    _VALID_URL = r'https?://hianime\.to/(?:watch/)?(?P<slug>[^/?]+)(?:-\d+)?-(?P<playlist_id>\d+)(?:\?ep=(?P<episode_id>\d+))?$'
+    _VALID_URL = r'https?://hianimez\.to/(?:watch/)?(?P<slug>[^/?]+)(?:-\d+)?-(?P<playlist_id>\d+)(?:\?ep=(?P<episode_id>\d+))?$'
 
     _TESTS = [
         {
-            'url': 'https://hianime.to/demon-slayer-kimetsu-no-yaiba-hashira-training-arc-19107',
+            'url': 'https://hianimez.to/demon-slayer-kimetsu-no-yaiba-hashira-training-arc-19107',
             'info_dict': {
                 'id': '19107',
                 'title': 'Demon Slayer: Kimetsu no Yaiba Hashira Training Arc',
@@ -17,7 +17,7 @@ class HiAnimeIE(InfoExtractor):
             'playlist_count': 8,
         },
         {
-            'url': 'https://hianime.to/watch/demon-slayer-kimetsu-no-yaiba-hashira-training-arc-19107?ep=124260',
+            'url': 'https://hianimez.to/watch/demon-slayer-kimetsu-no-yaiba-hashira-training-arc-19107?ep=124260',
             'info_dict': {
                 'id': '124260',
                 'title': 'To Defeat Muzan Kibutsuji',
@@ -30,7 +30,7 @@ class HiAnimeIE(InfoExtractor):
             },
         },
         {
-            'url': 'https://hianime.to/the-eminence-in-shadow-17473',
+            'url': 'https://hianimez.to/the-eminence-in-shadow-17473',
             'info_dict': {
                 'id': '17473',
                 'title': 'The Eminence in Shadow',
@@ -38,7 +38,7 @@ class HiAnimeIE(InfoExtractor):
             'playlist_count': 20,
         },
         {
-            'url': 'https://hianime.to/watch/the-eminence-in-shadow-17473?ep=94440',
+            'url': 'https://hianimez.to/watch/the-eminence-in-shadow-17473?ep=94440',
             'info_dict': {
                 'id': '94440',
                 'title': 'The Hated Classmate',
@@ -98,13 +98,13 @@ class HiAnimeIE(InfoExtractor):
 
     def _get_anime_title(self, slug, playlist_id):
         if not self.anime_title:
-            webpage = self._download_webpage(f'https://hianime.to/{slug}-{playlist_id}', playlist_id, note='Fetching Anime Title')
+            webpage = self._download_webpage(f'https://hianimez.to/{slug}-{playlist_id}', playlist_id, note='Fetching Anime Title')
             self.anime_title = get_element_by_class('film-name dynamic-name', webpage)
         return self.anime_title
 
     def _extract_playlist(self, slug, playlist_id, url):
         anime_title = self._get_anime_title(slug, playlist_id)
-        playlist_url = f'https://hianime.to/ajax/v2/episode/list/{playlist_id}'
+        playlist_url = f'https://hianimez.to/ajax/v2/episode/list/{playlist_id}'
         playlist_data = self._download_json(playlist_url, playlist_id, note='Fetching Episode List')
         episodes = self._get_elements_by_tag_and_attrib(playlist_data['html'], tag='a', attribute='class', value='ep-item')
 
@@ -121,7 +121,7 @@ class HiAnimeIE(InfoExtractor):
             title = clean_html(title_match.group(1)) if title_match else None
             data_number = data_number_match.group(1) if data_number_match else None
             data_id = data_id_match.group(1) if data_id_match else None
-            url = f'https://hianime.to{href_match.group(1)}' if href_match else None
+            url = f'https://hianimez.to{href_match.group(1)}' if href_match else None
 
             # Add episode details to episode_list
             self.episode_list[data_id] = {
@@ -150,7 +150,7 @@ class HiAnimeIE(InfoExtractor):
             raise ExtractorError(f'Episode data for episode_id {episode_id} not found')
 
         # Extract episode information and formats
-        servers_url = f'https://hianime.to/ajax/v2/episode/servers?episodeId={episode_id}'
+        servers_url = f'https://hianimez.to/ajax/v2/episode/servers?episodeId={episode_id}'
         servers_data = self._download_json(servers_url, episode_id, note='Fetching Server IDs')
 
         formats = []
@@ -163,7 +163,7 @@ class HiAnimeIE(InfoExtractor):
             if not server_id:
                 continue
 
-            sources_url = f'https://hianime.to/ajax/v2/episode/sources?id={server_id}'
+            sources_url = f'https://hianimez.to/ajax/v2/episode/sources?id={server_id}'
             sources_data = self._download_json(sources_url, episode_id, note=f'Getting {server_type.upper()} Episode Information')
             link = sources_data.get('link')
 
